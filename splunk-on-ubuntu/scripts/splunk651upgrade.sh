@@ -5,8 +5,6 @@
 # modified by: K.Y.
 # last modified: 1/26/2017
 # this script should be run as root
- 
-
 
 # stop Splunk service
 (cd /opt/splunk/bin && ./splunk stop)
@@ -22,15 +20,3 @@ tar zxvf /opt/splunk-6.5.1-f74036626f0c-Linux-x86_64.tgz -C /opt/
 
 # enable splunk on reboot
 (cd /opt/splunk/bin && ./splunk enable boot-start)
-
-
-
-
-
-
-
-
-
-
-
-

@@ -155,24 +155,15 @@ end
 
 log "Update iptables before running Splunk"
 
-# Open replication ports for KVStore and Replication and also add to SH cluster, if this is an SH member
-if [ $NODE_ROLE == "splunk_cluster_search_head" ]; then
-  iptables -I INPUT -p tcp --dport 9887 -j ACCEPT
-  iptables -I INPUT -p tcp --dport 8191 -j ACCEPT   
-  ip6tables -I INPUT -p tcp --dport 9887 -j ACCEPT
-  ip6tables -I INPUT -p tcp --dport 8191 -j ACCEPT
-  (cd /opt/splunk/bin && ./splunk init shcluster-config -mgmt_uri "https://${MY_IP}:8089" -replication_port 9887 -replication_factor 2 -secret secretKey -shcluster_label shcluster1)
-fi
-
 # Port forwarding for system ports: 443->10443, 514->10514
 iptables -t nat -A PREROUTING -p tcp -m tcp --dport 443 -j REDIRECT --to-ports 10443
 iptables -t nat -A PREROUTING -p udp -m udp --dport 514 -j REDIRECT --to-ports 10514
 iptables -t nat -A PREROUTING -p tcp -m tcp --dport 514 -j REDIRECT --to-ports 10514
-iptables-save > /etc/iptables/rules.v4
+# iptables-save > /etc/iptables/rules.v4
 ip6tables -t nat -A PREROUTING -p tcp -m tcp --dport 443 -j REDIRECT --to-ports 10443
 ip6tables -t nat -A PREROUTING -p udp -m udp --dport 514 -j REDIRECT --to-ports 10514
 ip6tables -t nat -A PREROUTING -p tcp -m tcp --dport 514 -j REDIRECT --to-ports 10514
-ip6tables-save > /etc/iptables/rules.v6
+# ip6tables-save > /etc/iptables/rules.v6
 
 log "Configuring Splunk"
 # Finally configure Splunk using chef client in local mode
@@ -184,5 +175,18 @@ rm -rf /etc/chef/repo
 log "Finished node-setup on ${HOSTNAME} with role ${NODE_ROLE}"
 
 chmod u+x splunk651upgrade.sh && ./splunk651upgrade.sh
+
+# Open replication ports for KVStore and Replication and also add to SH cluster, if this is an SH member
+if [ $NODE_ROLE == "splunk_cluster_search_head" ]; then
+  iptables -I INPUT -p tcp --dport 9887 -j ACCEPT
+  iptables -I INPUT -p tcp --dport 8191 -j ACCEPT
+  ip6tables -I INPUT -p tcp --dport 9887 -j ACCEPT
+  ip6tables -I INPUT -p tcp --dport 8191 -j ACCEPT
+  (cd /opt/splunk/bin && ./splunk init shcluster-config -mgmt_uri "https://${MY_IP}:8089" -replication_port 9887 -replication_factor 2 -secret secretKey -shcluster_label shcluster1)
+fi
+
+# Save additional iptable changes at the end
+iptables-save > /etc/iptables/rules.v4
+ip6tables-save > /etc/iptables/rules.v6
 
 exit 0
