@@ -154,6 +154,16 @@ chef_repo_path "/etc/chef/repo"
 end
 
 log "Update iptables before running Splunk"
+
+# Open replication ports for KVStore and Replication and also add to SH cluster, if this is an SH member
+if [ $NODE_ROLE == "splunk_cluster_search_head" ]; then
+  iptables -I INPUT -p tcp --dport 9887 -j ACCEPT
+  iptables -I INPUT -p tcp --dport 8191 -j ACCEPT   
+  ip6tables -I INPUT -p tcp --dport 9887 -j ACCEPT
+  ip6tables -I INPUT -p tcp --dport 8191 -j ACCEPT
+  (cd /opt/splunk/bin && ./splunk init shcluster-config -mgmt_uri "https://${MY_IP}:8089" -replication_port 9887 -replication_factor 2 -secret secretKey -shcluster_label shcluster1)
+fi
+
 # Port forwarding for system ports: 443->10443, 514->10514
 iptables -t nat -A PREROUTING -p tcp -m tcp --dport 443 -j REDIRECT --to-ports 10443
 iptables -t nat -A PREROUTING -p udp -m udp --dport 514 -j REDIRECT --to-ports 10514
@@ -172,5 +182,7 @@ chef-client -z -c /etc/chef/client.rb -j /etc/chef/node.json
 rm -rf /etc/chef/repo
 
 log "Finished node-setup on ${HOSTNAME} with role ${NODE_ROLE}"
+
+chmod u+x splunk651upgrade.sh && ./splunk651upgrade.sh
 
 exit 0
