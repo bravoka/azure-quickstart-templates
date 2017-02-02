@@ -741,18 +741,42 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "vmCount": "[variables('tshirtSize').clusterSearchheadCount]",
-          "shIpOctet01": "[variables('shIpOctet01')]",
-          "shIpOctet2": "[variables('shIpOctet2')]",
-          "shIpOctet3": "[variables('shIpOctet3')]",
-          "virtualNetworkName": "[parameters('virtualNetworkName')]",
-          "vnetId": "[variables('vnetId')]",
-          "subnet3Name": "[parameters('subnet3Name')]",
-          "applicationGatewayName": "[parameters('applicationGatewayName')]",
-          "applicationGatewaySize": "[parameters('applicationGatewaySize')]",
-          "applicationGatewayInstanceCount": "[parameters('applicationGatewayInstanceCount')]",
-          "frontendPort": "[parameters('frontendPort')]",
-          "backendPort": "[parameters('backendPort')]"
+          "vmCount": {
+            "value": "[variables('tshirtSize').clusterSearchheadCount]"
+          },
+          "shIpOctet01": {
+            "value": "[variables('shIpOctet01')]"
+          },
+          "shIpOctet2": {
+            "value": "[variables('shIpOctet2')]"
+          },
+          "shIpOctet3": {
+            "value": "[variables('shIpOctet3')]"
+          },
+          "virtualNetworkName": {
+            "value": "[parameters('virtualNetworkName')]"
+          },
+          "vnetId": {
+            "value": "[variables('vnetId')]"
+          },
+          "subnet3Name": {
+            "value": "[parameters('subnet3Name')]"
+          },
+          "applicationGatewayName": {
+            "value": "[parameters('applicationGatewayName')]"
+          },
+          "applicationGatewaySize": {
+            "value": "[parameters('applicationGatewaySize')]"
+          },
+          "applicationGatewayInstanceCount": {
+            "value": "[parameters('applicationGatewayInstanceCount')]"
+          },
+          "frontendPort": {
+            "value": "[parameters('frontendPort')]"
+          },
+          "backendPort": {
+            "value": "[parameters('backendPort')]"
+          }
         }
       }
     }
