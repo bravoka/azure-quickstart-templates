@@ -20,10 +20,13 @@
     "virtualNetworkId" : "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
     "subnet1Name": "[parameters('networkSettings').subnet.sh.name]",
     "subnet2Name": "[parameters('networkSettings').subnet.idx.name]",
+    "subnet3Name": "[parameters('networkSettings').subnet.lb.name]",
     "subnet1Prefix": "[parameters('networkSettings').subnet.sh.prefix]",
     "subnet2Prefix": "[parameters('networkSettings').subnet.idx.prefix]",
+    "subnet3Prefix": "[parameters('networkSettings').subnet.lb.prefix]",
     "subnet1Ref" : "[concat(variables('virtualNetworkId'),'/subnets/',variables('subnet1Name'))]",
-    "subnet2Ref" : "[concat(variables('virtualNetworkId'),'/subnets/',variables('subnet2Name'))]"
+    "subnet2Ref": "[concat(variables('virtualNetworkId'),'/subnets/',variables('subnet2Name'))]",
+    "subnet3Ref": "[concat(variables('virtualNetworkId'),'/subnets',variables('subnet3Name'))]"
   },
   "resources": [
     {
@@ -49,6 +52,12 @@
             "properties": {
               "addressPrefix": "[variables('subnet2Prefix')]"
             }
+          },
+          {
+            "name": "[variables('subnet3Name')]",
+            "properties": {
+              "addressPrefix":  "[variables('subnet3Prefix')]"
+            }
           }
         ]
       }
@@ -61,6 +70,10 @@
     },
     "subnet2Ref": {
       "value": "[variables('subnet2Ref')]",
+      "type": "string"
+    },
+    "subnet3Ref": {
+      "value": "[variables('subnet3Ref')]",
       "type": "string"
     }
   }

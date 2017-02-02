@@ -135,6 +135,13 @@
         "description": "Subnet for the Indexers"
       }
     },
+    "subnet3Name": {
+      "type": "string",
+      "defaultValue": "lbsubnet",
+      "metadata": {
+        "description": "Subnet for the load balancer"
+      }
+    },
     "subnet1Prefix": {
       "type": "string",
       "defaultValue": "10.0.0.0/24",
@@ -149,6 +156,13 @@
         "description": "Indexer subnet CIDR"
       }
     },
+    "subnet3Prefix": {
+      "type": "string",
+      "defaultValue": "10.0.2.0/24",
+      "metadata": {
+        "description": "Load balancer subnet CIDR"
+      }
+    },
     "subnet1StartAddress": {
       "type": "string",
       "defaultValue": "10.0.0.20",
@@ -161,6 +175,58 @@
       "defaultValue": "10.0.1.20",
       "metadata": {
         "description": "Indexer subnet start address"
+      }
+    },
+    "applicationGatewayName": {
+      "type": "string",
+      "defaultValue": "application-gateway",
+      "metadata": {
+        "description": "application gateway name"
+      }
+    },
+    "applicationGatewaySize": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_Small",
+        "Standard_Medium",
+        "Standard_Large"
+      ],
+      "defaultValue": "Standard_Small",
+      "metadata": {
+        "description": "application gateway size"
+      }
+    },
+    "applicationGatewayInstanceCount": {
+      "type": "int",
+      "allowedValues": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "defaultValue": 1,
+      "metadata": {
+        "description": "application gateway instance count"
+      }
+    },
+    "frontendPort": {
+      "type": "int",
+      "defaultValue": 80,
+      "metadata": {
+        "description": "load balancer front end port"
+      }
+    },
+    "backendPort": {
+      "type": "int",
+      "defaultValue": 8000,
+      "metadata": {
+        "description": "load balancer back end port connecting to searchheads"
       }
     },
     "sshFrom": {
@@ -207,6 +273,7 @@
     "sharedTemplateUrl": "[concat(variables('templateBaseUrl'), 'nested/', 'shared-resources.json')]",
     "virtualNetworkTemplateUrl": "[concat(variables('templateBaseUrl'), 'nested/', 'vnet-', parameters('virtualNetworkNewOrExisting'), '.json')]",
     "emptyTemplateUrl": "[concat(variables('templateBaseUrl'), 'nested/', 'empty-resources.json')]",
+    "applicationGatewayTemplateUrl": "[concat(variables('templateBaseUrl'), 'nested/', 'applicationgateway-resources.json')]",
     "nodesPerStorageAccount": 4,
     "tshirtSizeStandalone": {
       "standaloneVmSize": "[parameters('standaloneVmSize')]",
@@ -255,11 +322,30 @@
         "domainNamePrefix": "[parameters('domainNamePrefix')]",
         "count": "[add(4, parameters('clusterIndexerVmCount'))]",
         "map": [
-          "-csh0", "-csh1", "-csh2", "-cm",
-          "-cp0", "-cp1", "-cp2", "-cp3", "-cp4",
-          "-cp5", "-cp6", "-cp7", "-cp8", "-cp9",
-          "-cp10", "-cp11", "-cp12", "-cp13", "-cp14",
-          "-cp15", "-cp16", "-cp17", "-cp18", "-cp19"
+          "-csh0",
+          "-csh1",
+          "-csh2",
+          "-cm",
+          "-cp0",
+          "-cp1",
+          "-cp2",
+          "-cp3",
+          "-cp4",
+          "-cp5",
+          "-cp6",
+          "-cp7",
+          "-cp8",
+          "-cp9",
+          "-cp10",
+          "-cp11",
+          "-cp12",
+          "-cp13",
+          "-cp14",
+          "-cp15",
+          "-cp16",
+          "-cp17",
+          "-cp18",
+          "-cp19"
         ]
       },
       "storage": {
@@ -267,9 +353,28 @@
         "type": "[parameters('storageAccountType')]",
         "count": "[div(sub(add(add(4, parameters('clusterIndexerVmCount')), variables('nodesPerStorageAccount')), 1), variables('nodesPerStorageAccount'))]",
         "map": [
-          0, 1, 1, 0, 1, 1,
-          2, 2, 2, 2, 3, 3, 3, 3,
-          4, 4, 4, 4, 5, 5, 5, 5
+          0,
+          1,
+          1,
+          0,
+          1,
+          1,
+          2,
+          2,
+          2,
+          2,
+          3,
+          3,
+          3,
+          3,
+          4,
+          4,
+          4,
+          4,
+          5,
+          5,
+          5,
+          5
         ]
       }
     },
@@ -296,6 +401,11 @@
           "name": "[parameters('subnet2Name')]",
           "prefix": "[parameters('subnet2Prefix')]",
           "vnet": "[parameters('virtualNetworkName')]"
+        },
+        "lb": {
+          "name": "[parameters('subnet3Name')]",
+          "prefix": "[parameters('subnet3Prefix')]",
+          "vnet": "[parameters('virtualNetworkName')]"
         }
       },
       "statics": {
@@ -305,7 +415,7 @@
           "shIpOctet01": "[variables('shIpOctet01')]",
           "shIpOctet2": "[add(variables('shIpOctet2'), div(add(variables('shIpOctet3'), 1), 255))]",
           "shIpOctet3": "[mod(add(variables('shIpOctet3'), 1), 255)]"
-      },
+        },
         "clusterMasterIp": "[parameters('subnet2StartAddress')]",
         "indexerIps": {
           "ipOctet01": "[variables('ipOctet01')]",
@@ -337,7 +447,7 @@
     "vnetId-existing": "[resourceId(parameters('virtualNetworkExistingRGName'),'Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'))]",
     "vnetId": "[variables(concat('vnetId-', parameters('virtualNetworkNewOrExisting')))]",
     "subnet1Ref": "[concat(variables('vnetId'),'/subnets/',parameters('subnet1Name'))]",
-    "subnet2Ref": "[concat(variables('vnetId'),'/subnets/',parameters('subnet2Name'))]"   
+    "subnet2Ref": "[concat(variables('vnetId'),'/subnets/',parameters('subnet2Name'))]"
   },
   "resources": [
     {
@@ -614,6 +724,36 @@
             "value": "[concat(variables('templateBaseUrl'), 'nested/')]"
           }
         }
+      }
+    },
+    {
+      "apiVersion": "[variables('templateAPIVersion')]",
+      "type": "Microsoft.Resources/deployments",
+      "name": "applicationgateway-deployment",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'shared')]",
+        "[concat('Microsoft.Resources/deployments/', 'virtual-network')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('applicationGatewayTemplateUrl')]",
+          "contentVersion": "1.0.0.0"
+        }
+      },
+      "parameters": {
+        "vmCount": "[variables('tshirtSize').clusterSearchheadCount]",
+        "shIpOctet01": "[variables('shIpOctet01')]",
+        "shIpOctet2": "[variables('shIpOctet2')]",
+        "shIpOctet3": "[variables('shIpOctet3')]",
+        "virtualNetworkName": "[parameters('virtualNetworkName')]",
+        "vnetId": "[variables('vnetId')]",
+        "subnet3Name": "[parameters('subnet3Name')]",
+        "applicationGatewayName": "[parameters('applicationGatewayName')]",
+        "applicationGatewaySize": "[parameters('applicationGatewaySize')]",
+        "applicationGatewayInstanceCount": "[parameters('applicationGatewayInstanceCount')]",
+        "frontendPort": "[parameters('frontendPort')]",
+        "backendPort": "[parameters('backendPort')]" 
       }
     }
   ],

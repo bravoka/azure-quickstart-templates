@@ -1,0 +1,172 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "subnet3Name": {
+      "type": "string"
+    },
+    "virtualNetworkName": {
+      "type": "string"
+    },
+    "applicationGatewayName": {
+      "type": "string"
+    },
+    "applicationGatewaySize": {
+      "type": "string"
+    },
+    "applicationGatewayInstanceCount": {
+      "type": "int"
+    },
+    "frontendPort": {
+      "type": "int"
+    },
+    "backendPort": {
+      "type": "int"
+    },
+    "vmCount": {
+      "type": "int"
+    },
+    "shIpOctet01": {
+      "type": "string"
+    },
+    "shIpOctet2": {
+      "type": "string"
+    },
+    "shIpOctet3": {
+      "type": "string"
+    },
+    "vnetId": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "subnetRef": "[concat(parameters('vnetId'),'/subnets/',parameters('subnet3Name'))]",
+    "apiVersion": "2015-06-15",
+    "cookieBasedAffinity": "Enabled",
+    "backendIpArray": [
+      {
+        "IpAddress": "10.0.0.21"
+      },
+      {
+        "IpAddress": "10.0.0.22"
+      },
+      {
+        "IpAddress": "10.0.0.23"
+      },
+      {
+        "IpAddress": "10.0.0.24"
+      },
+      {
+        "IpAddress": "10.0.0.25"
+      },
+      {
+        "IpAddress": "10.0.0.26"
+      },
+      {
+        "IpAddress": "10.0.0.27"
+      },
+      {
+        "IpAddress": "10.0.0.28"
+      },
+      {
+        "IpAddress": "10.0.0.29"
+      },
+      {
+        "IpAddress": "10.0.0.30"
+      }
+    ]
+  },
+  "resources": [
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "name": "[parameters('applicationGatewayName')]",
+      "type": "Microsoft.Network/applicationGateways",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sku": {
+          "name": "[parameters('applicationGatewaySize')]",
+          "tier": "Standard",
+          "capacity": "[parameters('applicationGatewayInstanceCount')]"
+        },
+        "gatewayIPConfigurations": [
+          {
+            "name": "appGatewayIpConfig",
+            "properties": {
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ],
+        "frontendIPConfigurations": [
+          {
+            "name": "appGatewayFrontendIP",
+            "properties": {
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ],
+        "frontendPorts": [
+          {
+            "name": "appGatewayFrontendPort",
+            "properties": {
+              "Port": "[parameters('frontendPort')]"
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "appGatewayBackendPool",
+            "properties": {
+              "BackendAddresses": "[take(variables('backendIpArray'),parameters('vmCount'))]"
+            }
+          }
+        ],
+        "backendHttpSettingsCollection": [
+          {
+            "name": "appGatewayBackendHttpSettings",
+            "properties": {
+              "Port": "[parameters('backendPort')]",
+              "Protocol": "Http",
+              "CookieBasedAffinity": "[variables('cookieBasedAffinity')]"
+            }
+          }
+        ],
+        "httpListeners": [
+          {
+            "name": "appGatewayHttpListener",
+            "properties": {
+              "FrontendIpConfiguration": {
+                "Id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/frontendIPConfigurations/appGatewayFrontendIP')]"
+              },
+              "FrontendPort": {
+                "Id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/frontendPorts/appGatewayFrontendPort')]"
+              },
+              "Protocol": "Http",
+              "SslCertificate": null
+            }
+          }
+        ],
+        "requestRoutingRules": [
+          {
+            "Name": "rule1",
+            "properties": {
+              "RuleType": "Basic",
+              "httpListener": {
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/httpListeners/appGatewayHttpListener')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/backendAddressPools/appGatewayBackendPool')]"
+              },
+              "backendHttpSettings": {
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName')), '/backendHttpSettingsCollection/appGatewayBackendHttpSettings')]"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -120,6 +120,33 @@ if [ -n "${CLUSTER_MASTER_IP}" ]; then
 fi
 
 # Write Chef node file with appropriate role and custom attributes
+if [ $NODE_ROLE == "splunk_cluster_search_head" ]; then
+cat >/etc/chef/node.json <<end
+{
+  "splunk": {
+    "accept_license": true,
+    "is_server": true,
+    "server": {
+      "runasroot": false,
+      "edit_datastore_dir": true,
+      "datastore_dir": "${SPLUNK_DB_DIR}"
+    },
+    "web_port": 8000,
+    "web_conf": {
+      "splunkdConnectionTimeout": 300,
+      "updateCheckerBaseURL": 0
+    },
+    "ssl_options": {
+      "enable_ssl": false,
+      "use_default_certs": true
+    }
+  },
+  "run_list": [
+    "role[${NODE_ROLE}]"
+  ]
+}
+end
+else
 cat >/etc/chef/node.json <<end
 {
   "splunk": {
@@ -145,6 +172,9 @@ cat >/etc/chef/node.json <<end
   ]
 }
 end
+fi
+
+
 
 # Write Chef client configs
 cat >/etc/chef/client.rb <<end
