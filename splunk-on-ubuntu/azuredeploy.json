@@ -739,21 +739,21 @@
         "templateLink": {
           "uri": "[variables('applicationGatewayTemplateUrl')]",
           "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmCount": "[variables('tshirtSize').clusterSearchheadCount]",
+          "shIpOctet01": "[variables('shIpOctet01')]",
+          "shIpOctet2": "[variables('shIpOctet2')]",
+          "shIpOctet3": "[variables('shIpOctet3')]",
+          "virtualNetworkName": "[parameters('virtualNetworkName')]",
+          "vnetId": "[variables('vnetId')]",
+          "subnet3Name": "[parameters('subnet3Name')]",
+          "applicationGatewayName": "[parameters('applicationGatewayName')]",
+          "applicationGatewaySize": "[parameters('applicationGatewaySize')]",
+          "applicationGatewayInstanceCount": "[parameters('applicationGatewayInstanceCount')]",
+          "frontendPort": "[parameters('frontendPort')]",
+          "backendPort": "[parameters('backendPort')]"
         }
-      },
-      "parameters": {
-        "vmCount": "[variables('tshirtSize').clusterSearchheadCount]",
-        "shIpOctet01": "[variables('shIpOctet01')]",
-        "shIpOctet2": "[variables('shIpOctet2')]",
-        "shIpOctet3": "[variables('shIpOctet3')]",
-        "virtualNetworkName": "[parameters('virtualNetworkName')]",
-        "vnetId": "[variables('vnetId')]",
-        "subnet3Name": "[parameters('subnet3Name')]",
-        "applicationGatewayName": "[parameters('applicationGatewayName')]",
-        "applicationGatewaySize": "[parameters('applicationGatewaySize')]",
-        "applicationGatewayInstanceCount": "[parameters('applicationGatewayInstanceCount')]",
-        "frontendPort": "[parameters('frontendPort')]",
-        "backendPort": "[parameters('backendPort')]" 
       }
     }
   ],
