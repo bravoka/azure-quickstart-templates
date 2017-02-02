@@ -30,10 +30,10 @@
       "type": "string"
     },
     "shIpOctet2": {
-      "type": "string"
+      "type": "int"
     },
     "shIpOctet3": {
-      "type": "string"
+      "type": "int"
     },
     "vnetId": {
       "type": "string"

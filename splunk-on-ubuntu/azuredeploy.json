@@ -745,13 +745,13 @@
             "value": "[variables('tshirtSize').clusterSearchheadCount]"
           },
           "shIpOctet01": {
-            "value": "[variables('shIpOctet01')]"
+            "value": "[variables('networkSettings').statics.searchheadIps.shIpOctet01]"
           },
           "shIpOctet2": {
-            "value": "[variables('shIpOctet2')]"
+            "value": "[variables('networkSettings').statics.searchheadIps.shIpOctet2]"
           },
           "shIpOctet3": {
-            "value": "[variables('shIpOctet3')]"
+            "value": "[variables('networkSettings').statics.searchheadIps.shIpOctet3]"
           },
           "virtualNetworkName": {
             "value": "[parameters('virtualNetworkName')]"
