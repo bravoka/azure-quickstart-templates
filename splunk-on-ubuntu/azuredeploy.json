@@ -215,6 +215,12 @@
         "description": "application gateway instance count"
       }
     },
+    "applicationGatewayDomainNameLabel": {
+      "type": "string",
+      "metadata": {
+        "description": "public DNS name to access search head cluster"
+      }
+    },
     "frontendPort": {
       "type": "int",
       "defaultValue": 80,
@@ -770,6 +776,9 @@
           },
           "applicationGatewayInstanceCount": {
             "value": "[parameters('applicationGatewayInstanceCount')]"
+          },
+          "applicationGatewayDomainNameLabel": {
+            "value": "[parameters('applicationGatewayDomainNameLabel')]"
           },
           "frontendPort": {
             "value": "[parameters('frontendPort')]"

@@ -38,7 +38,7 @@
     "vnetId": {
       "type": "string"
     },
-    "loadBalancerDomainNameLabel": {
+    "applicationGatewayDomainNameLabel": {
       "type": "string"
     }
   },
