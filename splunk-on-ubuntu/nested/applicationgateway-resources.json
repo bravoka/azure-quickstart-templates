@@ -37,6 +37,9 @@
     },
     "vnetId": {
       "type": "string"
+    },
+    "loadBalancerDomainNameLabel": {
+      "type": "string"
     }
   },
   "variables": {
@@ -79,8 +82,24 @@
   "resources": [
     {
       "apiVersion": "[variables('apiVersion')]",
+      "name": "loadbalancer-publicip",
+      "type": "Microsoft.Network/PublicIPAddresses",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[parameters('loadBalancerDomainNameLabel')]"
+        }
+      }
+
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
       "name": "[parameters('applicationGatewayName')]",
       "type": "Microsoft.Network/applicationGateways",
+      "dependsOn": [
+        "Microsoft.Network/PublicIPAddresses/loadbalancer-publicip" 
+      ],
       "location": "[resourceGroup().location]",
       "properties": {
         "sku": {
@@ -104,6 +123,9 @@
             "properties": {
               "subnet": {
                 "id": "[variables('subnetRef')]"
+              },
+              "publicIPAddress": {
+                "id": "Microsoft.Network/PublicIPAddresses/loadbalancer-publicip"
               }
             }
           }
