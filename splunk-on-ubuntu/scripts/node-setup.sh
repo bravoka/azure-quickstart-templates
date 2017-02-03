@@ -212,7 +212,7 @@ if [ $NODE_ROLE == "splunk_cluster_search_head" ]; then
   iptables -I INPUT -p tcp --dport 8191 -j ACCEPT
   ip6tables -I INPUT -p tcp --dport 9887 -j ACCEPT
   ip6tables -I INPUT -p tcp --dport 8191 -j ACCEPT
-  (cd /opt/splunk/bin && ./splunk init shcluster-config -mgmt_uri "https://${MY_IP}:8089" -replication_port 9887 -replication_factor 2 -secret secretKey -shcluster_label shcluster1)
+  (cd /opt/splunk/bin && ./splunk init shcluster-config -mgmt_uri "https://${MY_IP}:8089" -replication_port 9887 -replication_factor 2 -secret secretKey -shcluster_label shcluster1 -auth "admin:${ADMIN_PASSWD}")
 fi
 
 # Save additional iptable changes at the end
