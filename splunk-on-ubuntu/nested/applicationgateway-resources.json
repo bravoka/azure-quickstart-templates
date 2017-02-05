@@ -98,7 +98,7 @@
       "name": "[parameters('applicationGatewayName')]",
       "type": "Microsoft.Network/applicationGateways",
       "dependsOn": [
-        "Microsoft.Network/PublicIPAddresses/loadbalancer-publicip" 
+        "Microsoft.Network/PublicIPAddresses/appgateway-publicip" 
       ],
       "location": "[resourceGroup().location]",
       "properties": {
