@@ -123,9 +123,6 @@
           {
             "name": "appGatewayFrontendIP",
             "properties": {
-              "subnet": {
-                "id": "[variables('subnetRef')]"
-              },
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(variables('publicIPAddressName')))]"
               }
