@@ -125,7 +125,7 @@
                 "id": "[variables('subnetRef')]"
               },
               "publicIPAddress": {
-                "id": "Microsoft.Network/PublicIPAddresses/loadbalancer-publicip"
+                "id": "Microsoft.Network/PublicIPAddresses/appgateway-publicip"
               }
             }
           }
