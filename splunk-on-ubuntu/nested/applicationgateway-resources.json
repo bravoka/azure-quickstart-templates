@@ -44,8 +44,10 @@
   },
   "variables": {
     "subnetRef": "[concat(parameters('vnetId'),'/subnets/',parameters('subnet3Name'))]",
+    "publicIPAddressName": "appGatewayIP",
     "apiVersion": "2015-06-15",
     "cookieBasedAffinity": "Enabled",
+    "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
     "backendIpArray": [
       {
         "IpAddress": "10.0.0.21"
@@ -82,7 +84,7 @@
   "resources": [
     {
       "apiVersion": "[variables('apiVersion')]",
-      "name": "appgateway-publicip",
+      "name": "[variables('publicIPAddressName')]",
       "type": "Microsoft.Network/PublicIPAddresses",
       "location": "[resourceGroup().location]",
       "properties": {
@@ -98,7 +100,7 @@
       "name": "[parameters('applicationGatewayName')]",
       "type": "Microsoft.Network/applicationGateways",
       "dependsOn": [
-        "Microsoft.Network/PublicIPAddresses/appgateway-publicip" 
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName')]" 
       ],
       "location": "[resourceGroup().location]",
       "properties": {
@@ -125,7 +127,7 @@
                 "id": "[variables('subnetRef')]"
               },
               "publicIPAddress": {
-                "id": "Microsoft.Network/PublicIPAddresses/appgateway-publicip"
+                "id": "[variables('publicIPAddressName')]"
               }
             }
           }
