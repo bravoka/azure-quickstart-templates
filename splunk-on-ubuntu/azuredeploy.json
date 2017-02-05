@@ -218,7 +218,7 @@
     "applicationGatewayDomainNameLabel": {
       "type": "string",
       "metadata": {
-        "description": "public DNS name to access search head cluster"
+        "description": "public DNS prefix to access search head cluster"
       }
     },
     "frontendPort": {

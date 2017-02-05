@@ -82,13 +82,13 @@
   "resources": [
     {
       "apiVersion": "[variables('apiVersion')]",
-      "name": "loadbalancer-publicip",
+      "name": "appgateway-publicip",
       "type": "Microsoft.Network/PublicIPAddresses",
       "location": "[resourceGroup().location]",
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
-          "domainNameLabel": "[parameters('loadBalancerDomainNameLabel')]"
+          "domainNameLabel": "[parameters('applicationGatewayDomainNameLabel')]"
         }
       }
 
