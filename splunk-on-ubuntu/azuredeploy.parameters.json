@@ -6,7 +6,7 @@
       "value": "West US"
     },
     "deploymentType": {
-      "value": "Standalone"
+      "value": "Cluster"
     },
     "standaloneVmSize": {
       "value": "Standard_D3_v2"
@@ -32,8 +32,8 @@
     "virtualNetworkName": {
       "value": "GEN-UNIQUE-10"
     },
-    "virtualNetworkNewOrExisting" : {
-      "value" : "new"
+    "virtualNetworkNewOrExisting": {
+      "value": "new"
     },
     "virtualNetworkExistingRGName": {
       "value": "GEN-UNIQUE-3"
@@ -70,6 +70,21 @@
     },
     "subnet2StartAddress": {
       "value": "10.0.1.20"
+    },
+    "applicationGatewayName": {
+      "value": "application-gateway"
+    },
+    "applicationGatewaySize": {
+      "value": "Standard_Small"
+    },
+    "applicationGatewayInstanceCount": {
+      "value": 1
+    },
+    "frontendPort": {
+      "value": 80
+    },
+    "backendPort": {
+      "value": 8000
     },
     "sshFrom": {
       "value": "0.0.0.0/0"

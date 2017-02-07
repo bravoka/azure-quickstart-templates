@@ -24,8 +24,8 @@
 #
 # Script Name: node-setup.sh
 # Author: Roy Arsan - Splunk Inc github:(rarsan)
-# Version: 0.2
-# Last Modified By: Roy Arsan
+# Version: 0.3
+# Last Modified By: Kelvin Yan (github: bravoka)
 # Description:
 #  This script sets up a node by configuring pre-installed Splunk Enterprise via Chef in local mode.
 #  The provisioning depends on a specified role and leverages standard Chef Splunk cookbooks
@@ -213,6 +213,7 @@ if [ $NODE_ROLE == "splunk_cluster_search_head" ]; then
   ip6tables -I INPUT -p tcp --dport 9887 -j ACCEPT
   ip6tables -I INPUT -p tcp --dport 8191 -j ACCEPT
   (cd /opt/splunk/bin && ./splunk init shcluster-config -mgmt_uri "https://${MY_IP}:8089" -replication_port 9887 -replication_factor 2 -secret secretKey -shcluster_label shcluster1 -auth "admin:${ADMIN_PASSWD}")
+  (cd /opt/splunk/bin && ./splunk restart)
 fi
 
 # Save additional iptable changes at the end

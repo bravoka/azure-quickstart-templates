@@ -17,7 +17,7 @@
     },
     "deploymentType": {
       "type": "string",
-      "defaultValue": "Standalone",
+      "defaultValue": "Cluster",
       "allowedValues": [
         "Standalone",
         "Cluster"
@@ -213,12 +213,6 @@
       "defaultValue": 1,
       "metadata": {
         "description": "application gateway instance count"
-      }
-    },
-    "applicationGatewayDomainNameLabel": {
-      "type": "string",
-      "metadata": {
-        "description": "public DNS prefix to access search head cluster"
       }
     },
     "frontendPort": {
@@ -795,9 +789,6 @@
           },
           "applicationGatewayInstanceCount": {
             "value": "[parameters('applicationGatewayInstanceCount')]"
-          },
-          "applicationGatewayDomainNameLabel": {
-            "value": "[parameters('applicationGatewayDomainNameLabel')]"
           },
           "frontendPort": {
             "value": "[parameters('frontendPort')]"

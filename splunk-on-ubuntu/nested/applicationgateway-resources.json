@@ -37,9 +37,6 @@
     },
     "vnetId": {
       "type": "string"
-    },
-    "applicationGatewayDomainNameLabel": {
-      "type": "string"
     }
   },
   "variables": {
@@ -50,34 +47,34 @@
     "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
     "backendIpArray": [
       {
-        "IpAddress": "10.0.0.21"
+        "IpAddress": "[concat(parameters('shIpOctet01'), parameters('shIpOctet2'), '.', add(parameters('shIpOctet3'), 1))]"
       },
       {
-        "IpAddress": "10.0.0.22"
+        "IpAddress": "[concat(parameters('shIpOctet01'), parameters('shIpOctet2'), '.', add(parameters('shIpOctet3'), 2))]"
       },
       {
-        "IpAddress": "10.0.0.23"
+        "IpAddress": "[concat(parameters('shIpOctet01'), parameters('shIpOctet2'), '.', add(parameters('shIpOctet3'), 3))]"
       },
       {
-        "IpAddress": "10.0.0.24"
+        "IpAddress": "[concat(parameters('shIpOctet01'), parameters('shIpOctet2'), '.', add(parameters('shIpOctet3'), 4))]"
       },
       {
-        "IpAddress": "10.0.0.25"
+        "IpAddress": "[concat(parameters('shIpOctet01'), parameters('shIpOctet2'), '.', add(parameters('shIpOctet3'), 5))]"
       },
       {
-        "IpAddress": "10.0.0.26"
+        "IpAddress": "[concat(parameters('shIpOctet01'), parameters('shIpOctet2'), '.', add(parameters('shIpOctet3'), 6))]"
       },
       {
-        "IpAddress": "10.0.0.27"
+        "IpAddress": "[concat(parameters('shIpOctet01'), parameters('shIpOctet2'), '.', add(parameters('shIpOctet3'), 7))]"
       },
       {
-        "IpAddress": "10.0.0.28"
+        "IpAddress": "[concat(parameters('shIpOctet01'), parameters('shIpOctet2'), '.', add(parameters('shIpOctet3'), 8))]"
       },
       {
-        "IpAddress": "10.0.0.29"
+        "IpAddress": "[concat(parameters('shIpOctet01'), parameters('shIpOctet2'), '.', add(parameters('shIpOctet3'), 9))]"
       },
       {
-        "IpAddress": "10.0.0.30"
+        "IpAddress": "[concat(parameters('shIpOctet01'), parameters('shIpOctet2'), '.', add(parameters('shIpOctet3'), 10))]"
       }
     ]
   },
