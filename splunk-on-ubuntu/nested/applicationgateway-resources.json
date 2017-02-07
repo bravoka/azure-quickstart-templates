@@ -47,6 +47,9 @@
     "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
     "backendIpArray": [
       {
+        "IpAddress": "[concat(parameters('shIpOctet01'), parameters('shIpOctet2'), '.', add(parameters('shIpOctet3'), 0))]"
+      },
+      {
         "IpAddress": "[concat(parameters('shIpOctet01'), parameters('shIpOctet2'), '.', add(parameters('shIpOctet3'), 1))]"
       },
       {
@@ -72,9 +75,6 @@
       },
       {
         "IpAddress": "[concat(parameters('shIpOctet01'), parameters('shIpOctet2'), '.', add(parameters('shIpOctet3'), 9))]"
-      },
-      {
-        "IpAddress": "[concat(parameters('shIpOctet01'), parameters('shIpOctet2'), '.', add(parameters('shIpOctet3'), 10))]"
       }
     ]
   },
