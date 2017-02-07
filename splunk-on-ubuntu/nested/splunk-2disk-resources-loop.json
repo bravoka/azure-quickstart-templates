@@ -50,6 +50,7 @@
     "shIpOctet01": "[parameters('machineSettings').staticIps.shIpOctet01]",
     "shIpOctet2": "[parameters('machineSettings').staticIps.shIpOctet2]",
     "shIpOctet3": "[parameters('machineSettings').staticIps.shIpOctet3]",
+    "startIPAddress": "[concat(variables('shIpOctet01'), variables('shIpOctet2'), '.', variables('shIpOctet3'))]",
     "storageReferencePrefix": "[concat('Microsoft.Storage/storageAccounts/', parameters('storageSettings').name)]",
     "storageApiVersion": "[providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]]"
   },
@@ -177,7 +178,7 @@
           "fileUris": "[parameters('osSettings').scripts]"
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('bash node-setup.sh', ' -r ', parameters('splunkServerRole'), ' -c ', variables('clusterMasterIp'), ' -p ', variables('singleQuote'), parameters('splunkAdminPassword'), variables('singleQuote'))]"
+          "commandToExecute": "[concat('bash node-setup.sh', ' -r ', parameters('splunkServerRole'), ' -c ', variables('clusterMasterIp'), ' -p ', variables('singleQuote'), parameters('splunkAdminPassword'), variables('singleQuote'), ' -n ', variables('vmCount'), ' -s ', variables('startIPAddress'))]"
         }
       }
     }
