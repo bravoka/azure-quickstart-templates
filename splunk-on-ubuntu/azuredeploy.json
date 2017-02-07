@@ -281,6 +281,7 @@
     "emptyTemplateUrl": "[concat(variables('templateBaseUrl'), 'nested/', 'empty-resources.json')]",
     "applicationGatewayTemplateUrl": "[concat(variables('templateBaseUrl'), 'nested/', 'applicationgateway-resources.json')]",
     "nodesPerStorageAccount": 4,
+    "clusterVmCount":  "[add(parameters('clusterSearchheadVmCount'),parameters('clusterIndexerVmCount'))]",
     "tshirtSizeStandalone": {
       "standaloneVmSize": "[parameters('standaloneVmSize')]",
       "clusterMasterVmSize": "",
@@ -326,11 +327,8 @@
       "publicIPAddress": {
         "name": "[parameters('publicIPName')]",
         "domainNamePrefix": "[parameters('domainNamePrefix')]",
-        "count": "[add(4, parameters('clusterIndexerVmCount'))]",
+        "count": "[add(1, parameters('clusterIndexerVmCount'))]",
         "map": [
-          "-csh0",
-          "-csh1",
-          "-csh2",
           "-cm",
           "-cp0",
           "-cp1",
@@ -354,10 +352,28 @@
           "-cp19"
         ]
       },
+      "shPublicIPAddress": {
+        "name": "[parameters('publicIPName')]",
+        "domainNamePrefix": "[parameters('domainNamePrefix')]",
+        "count": "[parameters('clusterSearchheadVmCount')]",
+        "map": [
+          "-csh0",
+          "-csh1",
+          "-csh2",
+          "-csh3",
+          "-csh4",
+          "-csh5",
+          "-csh6",
+          "-csh7",
+          "-csh8",
+          "-csh9",
+          "-csh10"
+        ]
+      },
       "storage": {
         "name": "[variables('storageAccountNamePrefix')]",
         "type": "[parameters('storageAccountType')]",
-        "count": "[div(sub(add(add(4, parameters('clusterIndexerVmCount')), variables('nodesPerStorageAccount')), 1), variables('nodesPerStorageAccount'))]",
+        "count": "[div(sub(add(add(4, variables('clusterVmCount')), variables('nodesPerStorageAccount')), 1), variables('nodesPerStorageAccount'))]",
         "map": [
           0,
           1,
@@ -475,6 +491,9 @@
           },
           "publicIPAddressSettings": {
             "value": "[variables('tshirtSize').publicIPAddress]"
+          },
+          "shPublicIPAddressSettings": {
+            "value": "[variables('tshirtSize').shPublicIPAddress]"
           },
           "storageSettings": {
             "value": "[variables('tshirtSize').storage]"
