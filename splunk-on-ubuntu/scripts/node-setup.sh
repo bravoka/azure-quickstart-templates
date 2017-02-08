@@ -222,13 +222,14 @@ if [ $NODE_ROLE == "splunk_cluster_search_head" ]; then
   (cd /opt/splunk/bin && ./splunk restart)
 fi
 
+if [ "$NODE_ROLE" == "splunk_cluster_search_head" ]; then
 # Remove this later, making sure script taking param successfully
 cat >~/shfip.txt <<end
 ${SEARCH_HEAD_FIRST_IP}
 end
-
 COUNT=$((SEARCH_HEADS-1))
 SEARCH_HEAD_LAST_IP=($(echo $SEARCH_HEAD_FIRST_IP | awk -F. -v var=$COUNT '{$4 += var}{gsub(OFS,".")}1'))
+fi
 
 # Start the captain. This is a workaround for now. Sleep is to ensure others are done cluster init before assigning captain
 if [ "$NODE_ROLE" == "splunk_cluster_search_head" ]; then
