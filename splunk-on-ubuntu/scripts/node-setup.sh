@@ -73,7 +73,7 @@ DATA_MOUNTPOINT="/datadrive"
 SPLUNK_DB_DIR="${DATA_MOUNTPOINT}/splunk_db"
 
 # Arguments
-while getopts :r:p:c:i:n:s optname; do
+while getopts :r:p:c:n:s:i optname; do
   if [ $optname != 'p' ]; then
     log "Option $optname set with value ${OPTARG}"
   fi
@@ -87,14 +87,14 @@ while getopts :r:p:c:i:n:s optname; do
     c) #IP of cluster master
       CLUSTER_MASTER_IP=${OPTARG}
       ;;
-    i) #Index of node
-      NODE_INDEX=${OPTARG}
-      ;;
     n) #Number of Search heads in cluster
       SEARCH_HEADS=${OPTARG}
       ;;
     s) #First IP of Search Head clusters
       SEARCH_HEAD_FIRST_IP=${OPTARG}
+      ;;
+    i) #Index of node
+      NODE_INDEX=${OPTARG}
       ;;
     h) #Show help
       help
@@ -222,24 +222,33 @@ if [ $NODE_ROLE == "splunk_cluster_search_head" ]; then
   (cd /opt/splunk/bin && ./splunk restart)
 fi
 
+# Remove this later, making sure script taking param successfully
+cat >~/shfip.txt <<end
+${SEARCH_HEAD_FIRST_IP}
+end
+
+COUNT=$((SEARCH_HEADS-1))
+SEARCH_HEAD_LAST_IP=($(echo $SEARCH_HEAD_FIRST_IP | awk -F. -v var=$COUNT '{$4 += var}{gsub(OFS,".")}1'))
+
 # Start the captain. This is a workaround for now. Sleep is to ensure others are done cluster init before assigning captain
-if [ $MY_IP == $SEARCH_HEAD_FIRST_IP ]; then
-  sleep 300s
-  COUNT=$((SEARCH_HEADS-1))
-  declare -a SEARCH_HEAD_CLUSTER
-  SEARCH_HEAD_CLUSTER+=("${MY_IP}")
-  INCREMENT_IP=$MY_IP
-  COUNTER=0
-  while [ $COUNT -gt $COUNTER ]; do
-    INCREMENT_IP=($(echo $INCREMENT_IP | awk -F. '{$4++}{gsub(OFS,".")}1'))
-    SEARCH_HEAD_CLUSTER+=("$INCREMENT_IP")
-    let COUNT-=1
-  done
-  for i in ${SEARCH_HEAD_CLUSTER[*]}; do
-    SERVERS_LIST+="https://${i}:8089,"
-  done
-  SERVERS_LIST=${SERVERS_LIST::-1}
-  (cd /opt/splunk/bin && ./splunk bootstrap shcluster-captain -servers_list "${SERVERS_LIST}" -auth "admin:${ADMIN_PASSWD}")
+if [ "$NODE_ROLE" == "splunk_cluster_search_head" ]; then
+  if [ "$MY_IP" == "$SEARCH_HEAD_LAST_IP" ]; then
+    sleep 300s
+    declare -a SEARCH_HEAD_CLUSTER
+    SEARCH_HEAD_CLUSTER+=("${MY_IP}"
+    INCREMENT_IP=$MY_IP
+    COUNTER=0
+    while [ $COUNT -gt $COUNTER ]; do
+      INCREMENT_IP=($(echo $INCREMENT_IP | awk -F. '{$4++}{gsub(OFS,".")}1'))
+      SEARCH_HEAD_CLUSTER+=("$INCREMENT_IP")
+      let COUNT-=1
+    done
+    for i in ${SEARCH_HEAD_CLUSTER[*]}; do
+      SERVERS_LIST+="https://${i}:8089,"
+    done
+    SERVERS_LIST=${SERVERS_LIST::-1}
+    (cd /opt/splunk/bin && ./splunk bootstrap shcluster-captain -servers_list "${SERVERS_LIST}" -auth "admin:${ADMIN_PASSWD}")
+  fi
 fi
 
 # Save additional iptable changes at the end
