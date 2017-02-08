@@ -367,7 +367,7 @@
       "storage": {
         "name": "[variables('storageAccountNamePrefix')]",
         "type": "[parameters('storageAccountType')]",
-        "count": "[div(sub(add(add(4, variables('clusterVmCount')), variables('nodesPerStorageAccount')), 1), variables('nodesPerStorageAccount'))]",
+        "count": "[div(sub(add(add(1, variables('clusterVmCount')), variables('nodesPerStorageAccount')), 1), variables('nodesPerStorageAccount'))]",
         "map": [
           0,
           1,
