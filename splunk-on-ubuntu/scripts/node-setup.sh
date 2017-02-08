@@ -236,7 +236,7 @@ if [ "$NODE_ROLE" == "splunk_cluster_search_head" ]; then
   if [ "$MY_IP" == "$SEARCH_HEAD_LAST_IP" ]; then
     sleep 300s
     declare -a SEARCH_HEAD_CLUSTER
-    SEARCH_HEAD_CLUSTER+=("${MY_IP}"
+    SEARCH_HEAD_CLUSTER+=("${MY_IP}")
     INCREMENT_IP=$MY_IP
     COUNTER=0
     while [ $COUNT -gt $COUNTER ]; do
