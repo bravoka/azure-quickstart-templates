@@ -210,7 +210,7 @@ rm -rf /etc/chef/repo
 
 log "Finished node-setup on ${HOSTNAME} with role ${NODE_ROLE}"
 
-chmod u+x splunk651upgrade.sh && ./splunk651upgrade.sh
+chmod u+x splunk652upgrade.sh && ./splunk652upgrade.sh
 
 # Open replication ports for KVStore and Replication and also add to SH cluster, if this is an SH member
 if [ $NODE_ROLE == "splunk_cluster_search_head" ]; then
