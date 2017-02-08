@@ -41,7 +41,7 @@
   },
   "variables": {
     "subnetRef": "[concat(parameters('vnetId'),'/subnets/',parameters('subnet3Name'))]",
-    "publicIPAddressName": "appGatewayIP",
+    "publicIPAddressName": "appgateway-publicip",
     "apiVersion": "2015-06-15",
     "cookieBasedAffinity": "Enabled",
     "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
