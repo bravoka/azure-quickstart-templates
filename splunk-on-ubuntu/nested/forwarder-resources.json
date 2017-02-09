@@ -37,7 +37,7 @@
     "templateAPIVersion": "2015-01-01",
     "resourceAPIVersion": "2015-06-15",
     "splunkServerRole": "splunk_server",
-    "securityGroupName": "[concat(parameters('namespace'), '-fwd')]",
+    "securityGroupName": "[concat(parameters('namespace'), '-nsg')]",
     "splunkTemplateUrl": "[concat(parameters('templateBaseUrl'), 'splunk-2disk-resources.json')]"
   },
   "resources": [

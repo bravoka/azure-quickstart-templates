@@ -227,10 +227,18 @@ if [ "$NODE_ROLE" == "splunk_cluster_search_head" ]; then
   SEARCH_HEAD_LAST_IP=($(echo $SEARCH_HEAD_FIRST_IP | awk -F. -v var=$COUNT '{$4 += var}{gsub(OFS,".")}1'))
 fi
 
+#Remove after debugging this problem
+cat >~/debug.txt <<end
+$SEARCH_HEADS
+$COUNT
+$SEARCH_HEAD_LAST_IP
+$MY_IP
+end
+
 # Start the captain. This is a workaround for now. Sleep is to ensure others are done cluster init before assigning captain
 if [ "$NODE_ROLE" == "splunk_cluster_search_head" ]; then
   if [ "$MY_IP" == "$SEARCH_HEAD_LAST_IP" ]; then
-    sleep 300s
+    sleep 180s
     declare -a SEARCH_HEAD_CLUSTER
     SEARCH_HEAD_CLUSTER+=("${SEARCH_HEAD_FIRST_IP}")
     INCREMENT_IP=$SEARCH_HEAD_FIRST_IP
@@ -240,10 +248,16 @@ if [ "$NODE_ROLE" == "splunk_cluster_search_head" ]; then
       SEARCH_HEAD_CLUSTER+=("$INCREMENT_IP")
       let COUNT-=1
     done
+    cat >~/debug2.txt <<end
+${SEARCH_HEAD_CLUSTER[*]}
+end
     for i in ${SEARCH_HEAD_CLUSTER[*]}; do
       SERVERS_LIST+="https://${i}:8089,"
     done
     SERVERS_LIST=${SERVERS_LIST::-1}
+cat >~/debug3.txt <<end
+$SERVER_LIST
+end
     (cd /opt/splunk/bin && ./splunk bootstrap shcluster-captain -servers_list "${SERVERS_LIST}" -auth "admin:${ADMIN_PASSWD}")
   fi
 fi
