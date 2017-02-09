@@ -212,6 +212,34 @@ log "Finished node-setup on ${HOSTNAME} with role ${NODE_ROLE}"
 
 chmod u+x splunk652upgrade.sh && ./splunk652upgrade.sh
 
+if [ "$NODE_ROLE" == "splunk_cluster_master" ]; then
+  cat >>/opt/splunk/etc/system/local/server.conf <<end
+
+[indexer_discovery]
+pass4SymmKey = indexerdiscoverysymmkey
+polling_rate = 10
+indexerWeightByDiskCapacity = false
+end
+  (cd /opt/splunk/bin && ./splunk restart)
+fi
+
+# Forwarder uses the default splunk_server as node role...
+if [ "$NODE_ROLE" == "splunk_server" ]; then
+  cat >>/opt/splunk/etc/system/local/outputs.conf <<end
+
+[indexer_discovery:idd1]
+pass4SymmKey = indexerdiscoverysymmkey
+master_uri = https://${CLUSTER_MASTER_IP}:8089
+
+[tcpout:indexcluster1 ]
+indexerDiscovery = idd1
+
+[tcpout]
+defaultGroup = indexcluster1
+end
+  (cd /opt/splunk/bin && ./splunk restart)
+fi
+
 # Open replication ports for KVStore and Replication and also add to SH cluster, if this is an SH member
 if [ $NODE_ROLE == "splunk_cluster_search_head" ]; then
   iptables -I INPUT -p tcp --dport 9887 -j ACCEPT
@@ -229,51 +257,21 @@ fi
 
 # Start the captain. This is a workaround for now. Sleep is to ensure others are done cluster init before assigning captain
 if [ "$NODE_ROLE" == "splunk_cluster_search_head" ] && [ "$MY_IP" == "$SEARCH_HEAD_LAST_IP" ]; then
-cat >~/tp1.txt <<end
-checkpoint1
-end
   declare -a SEARCH_HEAD_CLUSTER
   SEARCH_HEAD_CLUSTER+=("${SEARCH_HEAD_FIRST_IP}")
   INCREMENT_IP=$SEARCH_HEAD_FIRST_IP
-cat >~/tp2.txt <<end
-checkpoint2
-end
   COUNTER=0
   while [ "${COUNT}" -gt "${COUNTER}" ]; do
-cat >>~/tpwhile1.txt <<end
-startloop
-end
     INCREMENT_IP=($(echo $INCREMENT_IP | awk -F. '{$4++}{gsub(OFS,".")}1'))
-cat >>~/tpwhile2.txt <<end
-postincrement
-end
     SEARCH_HEAD_CLUSTER+=("$INCREMENT_IP")
-cat >>~/tpwhile3.txt <<end
-postarrayadd
-end
     COUNT=COUNT-1
-cat >>~/tpwhile4.txt <<end
-postcountdecrement
-end
   done
-cat >~/tp3.txt <<end
-checkpoint3
-end
   for i in ${SEARCH_HEAD_CLUSTER[*]}; do
     SERVERS_LIST+="https://${i}:8089,"
   done
-cat >~/tp4.txt <<end
-checkpoint4
-end
   SERVERS_LIST=${SERVERS_LIST::-1}
   sleep 180s
-cat >~/tp5.txt <<end
-checkpoint5
-end
   (cd /opt/splunk/bin && ./splunk bootstrap shcluster-captain -servers_list "${SERVERS_LIST}" -auth "admin:${ADMIN_PASSWD}")
-cat >~/tp6.txt <<end
-checkpoint6
-end
 fi
 # Save additional iptable changes at the end
 iptables-save > /etc/iptables/rules.v4
