@@ -237,8 +237,8 @@ $SEARCH_HEAD_FIRST_IP
 end
 
 # Start the captain. This is a workaround for now. Sleep is to ensure others are done cluster init before assigning captain
-if [ ("$NODE_ROLE" == "splunk_cluster_search_head" && "$MY_IP" == "$SEARCH_HEAD_LAST_IP") ]
-then
+if [ "$NODE_ROLE" == "splunk_cluster_search_head" ]; then
+  if [ "$MY_IP" == "$SEARCH_HEAD_LAST_IP" ]; then
   declare -a SEARCH_HEAD_CLUSTER
   SEARCH_HEAD_CLUSTER+=("${SEARCH_HEAD_FIRST_IP}")
   INCREMENT_IP=$SEARCH_HEAD_FIRST_IP
@@ -260,6 +260,7 @@ $SERVERS_LIST
 end
   sleep 180s
   (cd /opt/splunk/bin && ./splunk bootstrap shcluster-captain -servers_list "${SERVERS_LIST}" -auth "admin:${ADMIN_PASSWD}")
+  fi
 fi
 # Save additional iptable changes at the end
 iptables-save > /etc/iptables/rules.v4
