@@ -231,7 +231,7 @@ if [ "$NODE_ROLE" == "splunk_server" ]; then
 pass4SymmKey = indexerdiscoverysymmkey
 master_uri = https://${CLUSTER_MASTER_IP}:8089
 
-[tcpout:indexcluster1 ]
+[tcpout:indexcluster1]
 indexerDiscovery = idd1
 
 [tcpout]
