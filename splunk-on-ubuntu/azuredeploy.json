@@ -818,6 +818,7 @@
               "clusterMasterIp": "[variables('networkSettings').statics.clusterMasterIp]",
               "publicIPName": "[concat(variables('tshirtSize').publicIPAddress.name, '-fwd')]",
               "sshFrom": "[concat(parameters('sshFrom'), '')]",
+              "forwardedDataFrom": "[concat(parameters('forwardedDataFrom'), '')]",
               "availabilitySet": "[concat(variables('availabilitySetSettings').name, '1')]"
             }
           },
