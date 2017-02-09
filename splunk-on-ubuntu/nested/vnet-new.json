@@ -59,7 +59,13 @@
           {
             "name": "[variables('subnet3Name')]",
             "properties": {
-              "addressPrefix":  "[variables('subnet3Prefix')]"
+              "addressPrefix": "[variables('subnet3Prefix')]"
+            }
+          },
+          {
+            "name": "[variables('subnet4Name')]",
+            "properties": {
+              "addressPrefix": "[variables('subnet4Prefix')]"
             }
           }
         ]
@@ -77,6 +83,10 @@
     },
     "subnet3Ref": {
       "value": "[variables('subnet3Ref')]",
+      "type": "string"
+    },
+    "Subnet4Ref": {
+      "value": "[variables('subnet4Ref')]",
       "type": "string"
     }
   }
