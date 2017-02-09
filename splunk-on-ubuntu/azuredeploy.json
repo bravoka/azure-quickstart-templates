@@ -803,7 +803,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('tshirtSize').forwarderTemplateUrl]",
+          "uri": "[variables('forwarderTemplateUrl')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
