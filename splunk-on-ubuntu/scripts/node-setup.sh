@@ -251,7 +251,7 @@ end
 cat >>~/tpwhile3.txt <<end
 postarrayadd
 end
-    let COUNT-=1
+    COUNT=COUNT-1
 cat >>~/tpwhile4.txt <<end
 postcountdecrement
 end
