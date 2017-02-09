@@ -152,7 +152,7 @@
     {
       "apiVersion": "[variables('templateAPIVersion')]",
       "type": "Microsoft.Resources/deployments",
-      "name": "clusterpeers",
+      "name": "forwarder",
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
       ],
