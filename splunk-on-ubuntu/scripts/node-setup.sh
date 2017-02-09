@@ -227,33 +227,41 @@ if [ "$NODE_ROLE" == "splunk_cluster_search_head" ]; then
   SEARCH_HEAD_LAST_IP=($(echo $SEARCH_HEAD_FIRST_IP | awk -F. -v var=$COUNT '{$4 += var}{gsub(OFS,".")}1'))
 fi
 
-#Remove after debugging this problem
-cat >~/debug.txt <<end
-$SEARCH_HEADS
-$COUNT
-$SEARCH_HEAD_LAST_IP
-$MY_IP
-$SEARCH_HEAD_FIRST_IP
-end
-
 # Start the captain. This is a workaround for now. Sleep is to ensure others are done cluster init before assigning captain
 if [ "$NODE_ROLE" == "splunk_cluster_search_head" ] && [ "$MY_IP" == "$SEARCH_HEAD_LAST_IP" ]; then
+cat >~/tp1.txt <<end
+checkpoint1
+end
   declare -a SEARCH_HEAD_CLUSTER
   SEARCH_HEAD_CLUSTER+=("${SEARCH_HEAD_FIRST_IP}")
   INCREMENT_IP=$SEARCH_HEAD_FIRST_IP
+cat >~/tp2.txt <<end
+checkpoint2
+end
   COUNTER=0
   while [ "$COUNT" -gt "$COUNTER" ]; do
     INCREMENT_IP=($(echo $INCREMENT_IP | awk -F. '{$4++}{gsub(OFS,".")}1'))
     SEARCH_HEAD_CLUSTER+=("$INCREMENT_IP")
     let COUNT-=1
   done
+cat >~/tp3.txt <<end
+checkpoint3
+end
   for i in ${SEARCH_HEAD_CLUSTER[*]}; do
     SERVERS_LIST+="https://${i}:8089,"
   done
+cat >~/tp4.txt <<end
+checkpoint4
+end
   SERVERS_LIST=${SERVERS_LIST::-1}
   sleep 180s
+cat >~/tp5.txt <<end
+checkpoint5
+end
   (cd /opt/splunk/bin && ./splunk bootstrap shcluster-captain -servers_list "${SERVERS_LIST}" -auth "admin:${ADMIN_PASSWD}")
-
+cat >~/tp6.txt <<end
+checkpoint6
+end
 fi
 # Save additional iptable changes at the end
 iptables-save > /etc/iptables/rules.v4
