@@ -144,7 +144,7 @@
     },
     "subnet3Name": {
       "type": "string",
-      "defaultValue": "lbsubnet",
+      "defaultValue": "agwsubnet",
       "metadata": {
         "description": "Subnet for the Application Gateway"
       }
@@ -450,7 +450,7 @@
           "prefix": "[parameters('subnet2Prefix')]",
           "vnet": "[parameters('virtualNetworkName')]"
         },
-        "lb": {
+        "agw": {
           "name": "[parameters('subnet3Name')]",
           "prefix": "[parameters('subnet3Prefix')]",
           "vnet": "[parameters('virtualNetworkName')]"
