@@ -72,6 +72,13 @@
         "description": "Count of indexer nodes"
       }
     },
+    "forwarderVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_D3_v2",
+      "metadata": {
+        "description": "Size of forwarder VM"
+      }
+    },
     "adminUsername": {
       "type": "string",
       "metadata": {
@@ -139,7 +146,14 @@
       "type": "string",
       "defaultValue": "lbsubnet",
       "metadata": {
-        "description": "Subnet for the load balancer"
+        "description": "Subnet for the Load Balancer"
+      }
+    },
+    "subnet4Name": {
+      "type": "string",
+      "defaultValue": "fwdsubnet",
+      "metadata": {
+        "description": "Subnet for the Forwarder"
       }
     },
     "subnet1Prefix": {
@@ -160,7 +174,14 @@
       "type": "string",
       "defaultValue": "10.0.2.0/24",
       "metadata": {
-        "description": "Load balancer subnet CIDR"
+        "description": "Load Balancer subnet CIDR"
+      }
+    },
+    "subnet4Prefix": {
+      "type": "string",
+      "defaultValue": "10.0.3.0/24",
+      "metadata": {
+        "description": "Forwarder subnet CIDR"
       }
     },
     "subnet1StartAddress": {
@@ -175,6 +196,13 @@
       "defaultValue": "10.0.1.20",
       "metadata": {
         "description": "Indexer subnet start address"
+      }
+    },
+    "subnet4ForwarderIPAddress": {
+      "type": "string",
+      "defaultValue": "10.0.3.20",
+      "metadata": {
+        "description": "Forwarder subnet IP address"
       }
     },
     "applicationGatewayName": {
@@ -274,8 +302,9 @@
     "virtualNetworkTemplateUrl": "[concat(variables('templateBaseUrl'), 'nested/', 'vnet-', parameters('virtualNetworkNewOrExisting'), '.json')]",
     "emptyTemplateUrl": "[concat(variables('templateBaseUrl'), 'nested/', 'empty-resources.json')]",
     "applicationGatewayTemplateUrl": "[concat(variables('templateBaseUrl'), 'nested/', 'applicationgateway-resources.json')]",
+    "forwarderTemplateUrl": "[concat(variables('templateBaseUrl'), 'nested/', 'forwarder-resources.json')]",
     "nodesPerStorageAccount": 4,
-    "clusterVmCount":  "[add(parameters('clusterSearchheadVmCount'),parameters('clusterIndexerVmCount'))]",
+    "clusterVmCount": "[add(parameters('clusterSearchheadVmCount'),parameters('clusterIndexerVmCount'))]",
     "tshirtSizeStandalone": {
       "standaloneVmSize": "[parameters('standaloneVmSize')]",
       "clusterMasterVmSize": "",
@@ -364,6 +393,13 @@
           "-csh10"
         ]
       },
+      "fwdPublicIPAddress": {
+        "name": "[parameters('publicIPName')]",
+        "domainNamePrefix": "[parameters('domainNamePrefix')]",
+        "map": [
+          "-fwd"
+        ]
+      },
       "storage": {
         "name": "[variables('storageAccountNamePrefix')]",
         "type": "[parameters('storageAccountType')]",
@@ -403,6 +439,7 @@
     "ipOctet01": "[concat(split(variables('sa2'), '.')[0], '.', split(variables('sa2'), '.')[1], '.')]",
     "ipOctet2": "[int(split(variables('sa2'), '.')[2])]",
     "ipOctet3": "[int(split(variables('sa2'), '.')[3])]",
+    "forwarderIP": "[parameters('subnet4ForwarderIPAddress')]",
     "networkSettings": {
       "virtualNetworkName": "[parameters('virtualNetworkName')]",
       "virtualNetworkExistingRGName": "[parameters('virtualNetworkExistingRGName')]",
@@ -421,6 +458,11 @@
         "lb": {
           "name": "[parameters('subnet3Name')]",
           "prefix": "[parameters('subnet3Prefix')]",
+          "vnet": "[parameters('virtualNetworkName')]"
+        },
+        "fwd": {
+          "name": "[parameters('subnet4Name')]",
+          "prefix": "[parameters('subnet4Prefix')]",
           "vnet": "[parameters('virtualNetworkName')]"
         }
       },
@@ -463,7 +505,8 @@
     "vnetId-existing": "[resourceId(parameters('virtualNetworkExistingRGName'),'Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'))]",
     "vnetId": "[variables(concat('vnetId-', parameters('virtualNetworkNewOrExisting')))]",
     "subnet1Ref": "[concat(variables('vnetId'),'/subnets/',parameters('subnet1Name'))]",
-    "subnet2Ref": "[concat(variables('vnetId'),'/subnets/',parameters('subnet2Name'))]"
+    "subnet2Ref": "[concat(variables('vnetId'),'/subnets/',parameters('subnet2Name'))]",
+    "subnet4Ref": "[concat(variables('vnetId'),'/subnets/',parameters('subnet4Name'))]"
   },
   "resources": [
     {
@@ -488,6 +531,9 @@
           },
           "shPublicIPAddressSettings": {
             "value": "[variables('tshirtSize').shPublicIPAddress]"
+          },
+          "fwdPublicIPAddressSettings": {
+            "value": "[variables('tshirtSize').fwdPublicIPAddress]"
           },
           "storageSettings": {
             "value": "[variables('tshirtSize').storage]"
@@ -738,6 +784,63 @@
           },
           "subnet": {
             "value": "[variables('subnet2Ref')]"
+          },
+          "templateBaseUrl": {
+            "value": "[concat(variables('templateBaseUrl'), 'nested/')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "[variables('templateAPIVersion')]",
+      "type": "Microsoft.Resources/deployments",
+      "name": "forwarder-deployment",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'shared')]",
+        "[concat('Microsoft.Resources/deployments/', 'virtual-network')]",
+        "[concat('Microsoft.Resources/deployments/', 'clustermaster-deployment')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('tshirtSize').forwarderTemplateUrl]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "namespace": {
+            "value": "fwd"
+          },
+          "machineSettings": {
+            "value": {
+              "vmSize": "[parameters('forwarderVmSize')]",
+              "diskSize": "[variables('tshirtSize').diskSize]",
+              "staticIp": "[parameters('Subnet4ForwarderIPAddress')]",
+              "clusterMasterIp": "[variables('networkSettings').statics.clusterMasterIp]",
+              "publicIPName": "[concat(variables('tshirtSize').publicIPAddress.name, '-fwd')]",
+              "sshFrom": "[concat(parameters('sshFrom'), '')]",
+              "availabilitySet": "[concat(variables('availabilitySetSettings').name, '1')]"
+            }
+          },
+          "storageSettings": {
+            "value": "[variables('tshirtSize').storage]"
+          },
+          "osSettings": {
+            "value": "[variables('osSettings')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "splunkAdminPassword": {
+            "value": "[parameters('splunkAdminPassword')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "subnet": {
+            "value": "[variables('subnet4Ref')]"
           },
           "templateBaseUrl": {
             "value": "[concat(variables('templateBaseUrl'), 'nested/')]"
