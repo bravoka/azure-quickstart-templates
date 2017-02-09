@@ -239,10 +239,22 @@ cat >~/tp2.txt <<end
 checkpoint2
 end
   COUNTER=0
-  while [ "$COUNT" -gt "$COUNTER" ]; do
+  while [ "${COUNT}" -gt "${COUNTER}" ]; do
+cat >>~/tpwhile1.txt <<end
+startloop
+end
     INCREMENT_IP=($(echo $INCREMENT_IP | awk -F. '{$4++}{gsub(OFS,".")}1'))
+cat >>~/tpwhile2.txt <<end
+postincrement
+end
     SEARCH_HEAD_CLUSTER+=("$INCREMENT_IP")
+cat >>~/tpwhile3.txt <<end
+postarrayadd
+end
     let COUNT-=1
+cat >>~/tpwhile4.txt <<end
+postcountdecrement
+end
   done
 cat >~/tp3.txt <<end
 checkpoint3
