@@ -264,7 +264,7 @@ if [ "$NODE_ROLE" == "splunk_cluster_search_head" ] && [ "$MY_IP" == "$SEARCH_HE
   while [ "${COUNT}" -gt "${COUNTER}" ]; do
     INCREMENT_IP=($(echo $INCREMENT_IP | awk -F. '{$4++}{gsub(OFS,".")}1'))
     SEARCH_HEAD_CLUSTER+=("$INCREMENT_IP")
-    COUNT=COUNT-1
+    COUNT=$((COUNT-1))
   done
   for i in ${SEARCH_HEAD_CLUSTER[*]}; do
     SERVERS_LIST+="https://${i}:8089,"
