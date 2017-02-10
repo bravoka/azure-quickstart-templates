@@ -49,6 +49,7 @@
     },
     "clusterSearchheadVmCount": {
       "type": "int",
+      "defaultValue": 3,
       "minValue": 3,
       "maxValue": 10,
       "metadata": {
