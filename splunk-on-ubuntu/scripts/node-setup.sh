@@ -270,8 +270,9 @@ if [ "$NODE_ROLE" == "splunk_cluster_search_head" ] && [ "$MY_IP" == "$SEARCH_HE
     SERVERS_LIST+="https://${i}:8089,"
   done
   SERVERS_LIST=${SERVERS_LIST::-1}
-  sleep 180s
+  sleep 300s
   (cd /opt/splunk/bin && ./splunk bootstrap shcluster-captain -servers_list "${SERVERS_LIST}" -auth "admin:${ADMIN_PASSWD}")
+  echo "Searchhead cluster list: ${SERVERS_LIST}" >> ~\servers_list.txt
 fi
 # Save additional iptable changes at the end
 iptables-save > /etc/iptables/rules.v4
