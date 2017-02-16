@@ -66,7 +66,7 @@
     "clusterIndexerVmCount": {
       "type": "int",
       "defaultValue": 3,
-      "minValue": 3,
+      "minValue": 2,
       "maxValue": 20,
       "metadata": {
         "description": "Count of indexer nodes"

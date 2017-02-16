@@ -219,6 +219,10 @@ if [ "$NODE_ROLE" == "splunk_cluster_master" ]; then
 pass4SymmKey = indexerdiscoverysymmkey
 polling_rate = 10
 indexerWeightByDiskCapacity = false
+
+[shclustering]
+pass4SymmKey = secretKey
+shcluster_label = shcluster1
 end
   (cd /opt/splunk/bin && ./splunk restart)
 fi
@@ -246,7 +250,7 @@ if [ $NODE_ROLE == "splunk_cluster_search_head" ]; then
   iptables -I INPUT -p tcp --dport 8191 -j ACCEPT
   ip6tables -I INPUT -p tcp --dport 9887 -j ACCEPT
   ip6tables -I INPUT -p tcp --dport 8191 -j ACCEPT
-  (cd /opt/splunk/bin && ./splunk init shcluster-config -mgmt_uri "https://${MY_IP}:8089" -replication_port 9887 -replication_factor 2 -secret secretKey -shcluster_label shcluster1 -auth "admin:${ADMIN_PASSWD}")
+  (cd /opt/splunk/bin && ./splunk init shcluster-config -mgmt_uri "https://${MY_IP}:8089" -replication_port 9887 -replication_factor 2 -conf_deploy_fetch_url "https://${CLUSTER_MASTER_IP}:8089" -secret secretKey -shcluster_label shcluster1 -auth "admin:${ADMIN_PASSWD}")
   (cd /opt/splunk/bin && ./splunk restart)
 fi
 
