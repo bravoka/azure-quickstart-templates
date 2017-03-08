@@ -40,6 +40,9 @@
 
 set -e
 
+# Set the timezone to PST
+timedatectl set-timezone America/Vancouver
+
 help()
 {
     echo "This script sets up a node, and configures pre-installed Splunk Enterprise"
