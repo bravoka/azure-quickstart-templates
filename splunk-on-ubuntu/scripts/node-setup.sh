@@ -212,7 +212,7 @@ rm -rf /etc/chef/repo
 
 log "Finished node-setup on ${HOSTNAME} with role ${NODE_ROLE}"
 
-chmod u+x splunk652upgrade.sh && ./splunk652upgrade.sh
+chmod u+x splunkUpgrade.sh && ./splunkUpgrade.sh
 
 if [ "$NODE_ROLE" == "splunk_cluster_master" ]; then
   cat >>/opt/splunk/etc/system/local/server.conf <<end

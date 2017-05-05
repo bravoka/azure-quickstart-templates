@@ -492,7 +492,7 @@
       },
       "scripts": [
         "[concat(variables('templateBaseUrl'), 'scripts/', 'vm-disk-utils-0.1.sh')]",
-        "[concat(variables('templateBaseUrl'), 'scripts/', 'splunk652upgrade.sh')]",
+        "[concat(variables('templateBaseUrl'), 'scripts/', 'splunkUpgrade.sh')]",
         "[concat(variables('templateBaseUrl'), 'scripts/', 'node-setup.sh')]"
       ]
     },

@@ -11,14 +11,15 @@
 
 # download version 6.5.1 to local
 #wget -O /opt/splunk-6.5.1-f74036626f0c-Linux-x86_64.tgz 'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=6.5.1&product=splunk&filename=splunk-6.5.1-f74036626f0c-Linux-x86_64.tgz&wget=true'
-# download version 6.5.2 to local
-wget -O /opt/splunk-6.5.2-67571ef4b87d-Linux-x86_64.tgz 'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=6.5.2&product=splunk&filename=splunk-6.5.2-67571ef4b87d-Linux-x86_64.tgz&wget=true'
+# download version 6.6.0 to local
+wget -O /opt/splunk-6.6.0-1c4f3bbe1aea-Linux-x86_64.tgz 'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=6.6.0&product=splunk&filename=splunk-6.6.0-1c4f3bbe1aea-Linux-x86_64.tgz&wget=true'
 
 # unzip the tar file
-tar zxvf /opt/splunk-6.5.2-67571ef4b87d-Linux-x86_64.tgz -C /opt/
+tar zxvf /opt/splunk-6.6.0-1c4f3bbe1aea-Linux-x86_64.tgz -C /opt/
 
 # start splunk service
 (cd /opt/splunk/bin && ./splunk start --accept-license --answer-yes)
 
 # enable splunk on reboot
 (cd /opt/splunk/bin && ./splunk enable boot-start)
+
